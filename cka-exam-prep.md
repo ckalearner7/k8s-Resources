@@ -22,6 +22,6 @@ kubeadm
 
 ```bash
 Install metrics server
-
+```
 </p>
 </details>

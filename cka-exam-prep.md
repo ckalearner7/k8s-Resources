@@ -118,12 +118,18 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/down
 </details>
 
 
-# Install the metrics server
+# Finding relevant details of your kubernetes cluster
 <details><summary>show</summary>
 <p>
 
 ```bash
-Install metrics server
+kubectl version --short
+
+kubectl get cs
+
+kubectl cluster-info
+
+kubeadm alpha certs check-expiration
 ```
 </p>
 </details>

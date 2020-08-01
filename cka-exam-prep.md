@@ -340,7 +340,7 @@ Solution here.....
 </p>
 </details>
 
-# Create a POD, nginx and a deployment, nginx-deploy, with 2 replicas and a service, nginx-svc of type clusterip
+# Run script destroy-1.sh and investigate and fix the cluster
 <details><summary>show</summary>
 <p>
 
@@ -350,7 +350,29 @@ Solution here.....
 </p>
 </details>
 
-# Create a POD nginx image and service and nslookup both the pod and service
+# Run script destroy-2.sh and investigate and fix the cluster
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+
+# Run script destroy-3.sh and investigate and fix the cluster
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+
+# Create a POD nslookup-nginx, nginx image and service, nslookup-svc, and nslookup both the pod and service
 <details><summary>show</summary>
 <p>
 
@@ -420,7 +442,7 @@ Solution here.....
 </p>
 </details>
 
-# Create a service account named, secret-admin, and provide only read on secrets.  Run a pod with that specific service account, and now curl the kubernetes cluster to confirm access
+# Create a service account named, secret-admin, and provide read on secrets.  Run a pod with that specific service account, and now curl the kubernetes cluster to confirm access
 <details><summary>show</summary>
 <p>
 
@@ -440,7 +462,7 @@ Solution here.....
 </p>
 </details>
 
-# Create a role called developer, with all access to pods, services and deployments.  Provide access to scott
+# Create a role called developer, with all access to pods, services and deployments. 
 <details><summary>show</summary>
 <p>
 
@@ -450,7 +472,7 @@ Solution here.....
 </p>
 </details>
 
-# Authorize "scott" to create PODs and Deployments
+# Authorize "scott" to create PODs, Deployments and services
 <details><summary>show</summary>
 <p>
 
@@ -459,6 +481,7 @@ Solution here.....
 ```
 </p>
 </details>
+
 
 # Modify the config file to include credentials for scott
 <details><summary>show</summary>
@@ -480,3 +503,33 @@ Solution here.....
 </p>
 </details>
 
+
+# Create a service account “scott-app-sa"
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a role called frontend, with all access to pods and deployments. 
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Authorize "scott-app-sa" to create PODs and Deployments
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>

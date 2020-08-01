@@ -134,8 +134,8 @@ kubeadm alpha certs check-expiration
 </p>
 </details>
 
-# Now that you have a 3-node cluster up and running using custom-columns provide the 
-a. node name as NAME, node Internal IP as NODE_IP and pod's cidr as POD_CIDR ip across all the nodes
+# Now that you have a 3-node cluster up and running  provide the 
+a. using custom-columns display the node name as NAME, node Internal IP as NODE_IP and pod's cidr as POD_CIDR ip across all the nodes
 <details><summary>show</summary>
 <p>
 
@@ -186,7 +186,18 @@ cat /var/lib/kubelet/config.yaml | grep static
 </details>
 
 
+# Create 3 pods 
+In the default namespace, nginx-pod (image: nginx), busybox-pod (image:busybox;1.28, sleep 1d) and bash-pod (image: bash, sleep 3600 seconds)
+<details><summary>show</summary>
+<p>
 
+```bash
+k run  --generator=run-pod/v1 nginx-pod --image=nginx
+k run  --generator=run-pod/v1 busybox-pod --image=busybox:1.28 --command -- /bin/sh -c "sleep 1d"
+k run  --generator=run-pod/v1 bash-pod --image=bash --command -- /bin/sh -c "sleep 3600"
+```
+</p>
+</details>
 
 
 # JSON Path examples

@@ -148,7 +148,14 @@ Find the expiration dates of kubelet server cert and client cert
 <details><summary>show</summary>
 <p>
 ```bash
-solution here
+--find kubelet server cert file location
+-- on master node, cd /etc/kubernetes
+   client-certificate: /var/lib/kubelet/pki/kubelet-client-current.pem
+  openssl x509 -noout -text -in /var/lib/kubelet/pki/kubelet-client-current.pem
+  
+--Find kubelet client cert file location: on master node
+cd /var/lib/kubelet/pki
+openssl x509 -noout -text -in /var/lib/kubelet/pki/kubelet.crt
 ```
 </p>
 </details>
@@ -158,7 +165,19 @@ solution here
 <details><summary>show</summary>
 <p>
 ```bash
-solution here
+openssl x509 -noout -text -in /etc/kubernetes/pki/ca.crt
+ Issuer: CN=kubernetes
+        Validity
+            Not Before: Aug  1 18:14:01 2020 GMT
+            Not After : Jul 30 18:14:01 2030 GMT
+        Subject: CN=kubernetes
+        
+openssl x509 -noout -text -in /etc/kubernetes/pki/etcd/ca.crt
+  Issuer: CN=etcd-ca
+        Validity
+            Not Before: Aug  1 18:14:02 2020 GMT
+            Not After : Jul 30 18:14:02 2030 GMT
+        Subject: CN=etcd-ca
 ```
 </p>
 </details>

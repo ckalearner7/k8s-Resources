@@ -302,7 +302,13 @@ spec:
 status: {}
 
 k annotate deploy nginx-deploy kubernetes.io/change-cause="nginx-1.14-custom approved-infosec"
-
+or
+you can add the annotation directly in above yaml file:
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: "nginx-1.14-custom approved-infosec"
+    
 k rollout history deploy nginx-deploy
 
 ```

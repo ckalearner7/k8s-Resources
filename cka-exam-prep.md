@@ -2,7 +2,7 @@
 
 # Install
 
-### Be able to install a 3-node cluster - 1 master, and 2 nodes using kubeadm
+### Be able to install a 3-node cluster - 1 master, and 2 nodes using kubeadm.  Use version 1.17
 
 <details><summary>show</summary>
 <p>

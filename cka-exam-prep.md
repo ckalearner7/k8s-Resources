@@ -1,6 +1,6 @@
 # Certified Kubernetes Administrator
 
-# Install (8%)
+# Install
 
 ### Be able to install a 3-node cluster - 1 master, and 2 nodes using kubeadm
 
@@ -197,8 +197,15 @@ k get secrets -o custom-columns=NAME:.metadata.name,NAMESPACE:.metadata.namespac
 
 
 
+# 2. Create a POD, nginx and a deployment, nginx-deploy, with 2 replicas and a service, nginx-svc of type clusterip
+<details><summary>show</summary>
+<p>
 
-
+```bash
+Solution here.....
+```
+</p>
+</details>
 
 
 

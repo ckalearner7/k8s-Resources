@@ -197,7 +197,7 @@ k get secrets -o custom-columns=NAME:.metadata.name,NAMESPACE:.metadata.namespac
 
 
 
-# 2. Create a POD, nginx and a deployment, nginx-deploy, with 2 replicas and a service, nginx-svc of type clusterip
+# Create a POD, nginx and a deployment, nginx-deploy, with 2 replicas and a service, nginx-svc of type clusterip
 <details><summary>show</summary>
 <p>
 
@@ -209,7 +209,274 @@ Solution here.....
 
 
 
+# Now upgrade the cluster to 1.18
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
 
 
+# Take a backup of ETCD
+<details><summary>show</summary>
+<p>
 
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Restore the backup
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a new scheduler - call it - scheduler-important
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create CM (fname=scott, lname=tiger) and read that CM in a configmap1, image: httpd:2.4-alpine
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create pod configmap2 and mount the same CM into the pod2 as a volume
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create pod configmap3  and read the fname name as FNAME in the POD3
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a deployment of nginx to run on the master
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a demonset that runs on all the nodes, cpu: 10m, memory: 10Mi
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a secret called secret1 user=user1 and pass=1234
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create pod secret1 and mount secret1 as volume
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create pod secret2 and read user as USER from secret1
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create pod secret3 and read both the values from secret1, user and pass
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a POD, nginx and a deployment, nginx-deploy, with 2 replicas and a service, nginx-svc of type clusterip
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a POD nginx image and service and nslookup both the pod and service
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a deployment with 3 replicas, and ensure that the POD is created on different nodes, as in the replicas of POD should not run on the same node
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a service account called - “scott-sa” and then using imperative way, create a pod with schedulername - “scott-sa”, requests of memory: 10Mi, cpu: 0.2 and limits: memory: 10Mi, cpu: 0.2m, ports, and labels as name: scotts-pod, sa-used: scott-sa.  Now using either jsonpath or custom-columns, investigate the requests and limits assigned.  In addition, now add the QOS class for the POD
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Add a 3rd node to the cluster
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a deployment with nginx, container port running on 80, labels: tier=frontend; app=partner-portal, with 3 replicas.  Add a redis container and make sure that each redis container is co-located with the nginx container
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Run a POD on the master
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Run a POD on a specific node
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a service account named, secret-admin, and provide only read on secrets.  Run a pod with that specific service account, and now curl the kubernetes cluster to confirm access
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a user “scott” and authenticate via certs, as in scott.key, and scott.crt
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Create a role called developer, with all access to pods, services and deployments.  Provide access to scott
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Authorize "scott" to create PODs and Deployments
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Modify the config file to include credentials for scott
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Switch to scott and confirm
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
 

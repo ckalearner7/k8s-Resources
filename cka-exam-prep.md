@@ -128,8 +128,30 @@ kubectl version --short
 kubectl get cs
 
 kubectl cluster-info
-
+```
+</p>
+</details>
+## Get certificate details - use kubeadm to get expiration details
+<details><summary>show</summary>
+<p>
+```bash
 kubeadm alpha certs check-expiration
+```
+</p>
+</details>
+## Get certificate details - find the expiration dates of kubelet server cert and client cert
+<details><summary>show</summary>
+<p>
+```bash
+solution here
+```
+</p>
+</details>
+## Get certificate details - find out the details of the experiration details of CA for api-server & etcd
+<details><summary>show</summary>
+<p>
+```bash
+solution here
 ```
 </p>
 </details>
@@ -199,6 +221,63 @@ k run  --generator=run-pod/v1 bash-pod --image=bash --command -- /bin/sh -c "sle
 </p>
 </details>
 
+
+# Expose pod nginx via service
+In the default namespace, service name is: nginx-svc port: 8080 target-port: 80 
+<details><summary>show</summary>
+<p>
+
+```bash
+k expose pod nginx --name=nginx-svc --port=8080 --target-port=80 
+
+```
+</p>
+</details>
+
+# Create 3 deployments 
+In the default namespace, 
+deployment 1: name: nginx-deploy, image: nginx:1.14 replicas: 2, labels: app=partner-portal tier=app cost-center=123, annotate deployment as 'nginx-1.14-custom approved-infosec'
+deployment 2: name: redis-deploy, image: redis replicas: 1, labesl:  labels: app=partner-portal tier=cache cost-center=123, annotate deployment as 'redis-custom approved-infosec'
+deployment 3: name: mysql-deploy, image: mysql replicas: 1, labels:  labels: app=partner-portal tier=db cost-center=123, annotate deployment as 'mysql-custom approved-infosec'
+
+<details><summary>show</summary>
+<p>
+
+```bash
+2 update......
+
+```
+</p>
+</details>
+
+# Create pv and pvc's
+In the default namespace, 
+pv1 : name: nginx-pv, storageclass: local, size 1Gi, hostPath: /mnt/nginxpv ,  accessModes: readwriteMany
+pv2: name: redis-pv, storageclass: local, size 1Gi, hostPath: /mnt/redispv , ..... accessModes: readwriteMany
+pv3: name: mysql-pv, storageclass: local, size 1Gi, hostPath: /mnt/mysqlpv ,  accessModes: readwriteMany  -- ***THIS PV needs to reside on only NODE 2 - use nodeAffinity ****
+
+<details><summary>show</summary>
+<p>
+
+```bash
+2 update......
+
+```
+</p>
+</details>
+
+
+# Create node port service for nginx pod
+In the default namespace, service name is: nginx-svc-np port: 80 target-port: 80 nodePort: 30080 
+<details><summary>show</summary>
+<p>
+
+```bash
+2 update......
+
+```
+</p>
+</details>
 
 # JSON Path examples
 <details><summary>Using custom-columns, for a node, display the name, internal IP, schedulable status, CPU, ready status, os image, and architecture.  Also, sort this by CPU count</summary>
@@ -631,17 +710,6 @@ Solution here.....
 ```
 </p>
 </details>
-
-# Get certificate details 
-<details><summary>show</summary>
-<p>
-
-```bash
-Solution here.....
-```
-</p>
-</details>
-
 
 # Renew certificate using kubeadm and manually using openSSL
 <details><summary>show</summary>

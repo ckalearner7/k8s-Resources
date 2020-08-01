@@ -59,7 +59,7 @@ cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
 deb https://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 sudo apt-get update
-sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-get install -y kubelet=1.17.0-00 kubeadm=1.17.0-00 kubectl=1.17.0-00
 sudo apt-mark hold kubelet kubeadm kubectl
 
 
@@ -130,6 +130,31 @@ kubectl get cs
 kubectl cluster-info
 
 kubeadm alpha certs check-expiration
+```
+</p>
+</details>
+
+# Now that you have a 3-node cluster up and running, write to /tmp/cluster-info.txt using custom-columns and provide the 
+a. node name as NAME, node Internal IP as NODE_IP and pod's cidr as POD_CIDR ip across all the nodes
+b. the default service cluster ip range that has been created for the cluster
+c. CNI 
+d. location of the static pod files
+3. verify the location by showing the location via kubelet yaml file
+<details><summary>show</summary>
+<p>
+
+```bash
+kgn -o custom-columns=NAME:.metadata.name,NODE_IP:.status.addresses[?(@.type==\"InternalIP\")].address,POD_CIDR:.spec.podCIDR
+
+kdp kube-apiserver-k8s-head  $KN | grep service-cluster-ip-range | sed 's/--service-cluster-ip-range=//'
+
+cat /etc/cni/net.d/10-weave.conflist | grep name | head -1
+
+The static pod path is /etc/kubernetes/manifests
+
+ps -aef | grep kubelet
+cat /var/lib/kubelet/config.yaml | grep static
+
 ```
 </p>
 </details>
@@ -533,3 +558,59 @@ Solution here.....
 ```
 </p>
 </details>
+
+
+# Create a network policy
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+
+# Create a init-container
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+
+# Ingress
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+# Get certificate details 
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+
+# Renew certificate using kubeadm and manually using openSSL
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
+

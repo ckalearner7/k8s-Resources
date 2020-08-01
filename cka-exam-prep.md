@@ -136,9 +136,12 @@ Use kubeadm to get expiration details
 
 <details><summary>show</summary>
 <p>
+  
 ```bash
 kubeadm alpha certs check-expiration
+
 ```
+
 </p>
 </details>
 
@@ -147,6 +150,7 @@ Find the expiration dates of kubelet server cert and client cert
 
 <details><summary>show</summary>
 <p>
+  
 ```bash
 --find kubelet server cert file location
 -- on master node, cd /etc/kubernetes
@@ -157,6 +161,7 @@ Find the expiration dates of kubelet server cert and client cert
 cd /var/lib/kubelet/pki
 openssl x509 -noout -text -in /var/lib/kubelet/pki/kubelet.crt
 ```
+
 </p>
 </details>
 
@@ -164,6 +169,7 @@ openssl x509 -noout -text -in /var/lib/kubelet/pki/kubelet.crt
 # Get certificate details - find out the details of the experiration details of CA for api-server & etcd
 <details><summary>show</summary>
 <p>
+  
 ```bash
 openssl x509 -noout -text -in /etc/kubernetes/pki/ca.crt
  Issuer: CN=kubernetes

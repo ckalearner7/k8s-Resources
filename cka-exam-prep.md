@@ -131,8 +131,8 @@ kubectl cluster-info
 </p>
 </details>
 
-# Get certificate details 
-Use kubeadm to get expiration details
+# Certificates in kubernetes 
+## Use kubeadm to get expiration details
 
 <details><summary>show</summary>
 <p>
@@ -166,12 +166,12 @@ openssl x509 -noout -text -in /var/lib/kubelet/pki/kubelet.crt
 </details>
 
 
-## Get certificate details - find out the details of the experiration details of CA for api-server & etcd
+## Get expiration details, issuer, Subj Alt names of CA for api-server & etcd
 <details><summary>show</summary>
 <p>
   
 ```bash
-openssl x509 -noout -text -in /etc/kubernetes/pki/ca.crt
+openssl x509 -noout -text -in /etc/kubernetes/pki/ca.crt |grep -i Issuer -A 5
  Issuer: CN=kubernetes
         Validity
             Not Before: Aug  1 18:14:01 2020 GMT
@@ -184,6 +184,12 @@ openssl x509 -noout -text -in /etc/kubernetes/pki/etcd/ca.crt
             Not Before: Aug  1 18:14:02 2020 GMT
             Not After : Jul 30 18:14:02 2030 GMT
         Subject: CN=etcd-ca
+ 
+ openssl x509 -noout -text -in /etc/kubernetes/pki/etcd/server.crt  |grep -i Alternative -A 2
+   X509v3 Subject Alternative Name: 
+                DNS:k8s-head, DNS:localhost, IP Address:192.168.205.10, IP Address:127.0.0.1, IP Address:0:0:0:0:0:0:0:1
+ 
+        
 ```
 </p>
 </details>

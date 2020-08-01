@@ -134,22 +134,48 @@ kubeadm alpha certs check-expiration
 </p>
 </details>
 
-# Now that you have a 3-node cluster up and running, write to /tmp/cluster-info.txt using custom-columns and provide the 
+# Now that you have a 3-node cluster up and running using custom-columns provide the 
 a. node name as NAME, node Internal IP as NODE_IP and pod's cidr as POD_CIDR ip across all the nodes
-b. the default service cluster ip range that has been created for the cluster
-c. CNI 
-d. location of the static pod files
-3. verify the location by showing the location via kubelet yaml file
 <details><summary>show</summary>
 <p>
 
 ```bash
 kgn -o custom-columns=NAME:.metadata.name,NODE_IP:.status.addresses[?(@.type==\"InternalIP\")].address,POD_CIDR:.spec.podCIDR
 
+```
+</p>
+</details>
+
+
+b. the default service cluster ip range that has been created for the cluster
+
+<details><summary>show</summary>
+<p>
+
+```bash
 kdp kube-apiserver-k8s-head  $KN | grep service-cluster-ip-range | sed 's/--service-cluster-ip-range=//'
 
+```
+</p>
+</details>
+
+c. CNI 
+<details><summary>show</summary>
+<p>
+
+```bash
 cat /etc/cni/net.d/10-weave.conflist | grep name | head -1
 
+```
+</p>
+</details>
+
+d. location of the static pod files and verify the location by showing the location via kubelet yaml file
+
+<details><summary>show</summary>
+<p>
+
+```bash
 The static pod path is /etc/kubernetes/manifests
 
 ps -aef | grep kubelet
@@ -158,6 +184,9 @@ cat /var/lib/kubelet/config.yaml | grep static
 ```
 </p>
 </details>
+
+
+
 
 
 # JSON Path examples

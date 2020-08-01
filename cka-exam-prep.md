@@ -119,19 +119,21 @@ kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/down
 
 
 # Finding relevant details of your kubernetes cluster
+Determine the cluster-info and component status
 <details><summary>show</summary>
 <p>
 
 ```bash
-kubectl version --short
-
 kubectl get cs
 
 kubectl cluster-info
 ```
 </p>
 </details>
-## Get certificate details - use kubeadm to get expiration details
+
+# Get certificate details 
+Use kubeadm to get expiration details
+
 <details><summary>show</summary>
 <p>
 ```bash
@@ -139,7 +141,10 @@ kubeadm alpha certs check-expiration
 ```
 </p>
 </details>
-## Get certificate details - find the expiration dates of kubelet server cert and client cert
+
+# Get certificate details for the kubelet
+Find the expiration dates of kubelet server cert and client cert
+
 <details><summary>show</summary>
 <p>
 ```bash
@@ -147,7 +152,9 @@ solution here
 ```
 </p>
 </details>
-## Get certificate details - find out the details of the experiration details of CA for api-server & etcd
+
+
+# Get certificate details - find out the details of the experiration details of CA for api-server & etcd
 <details><summary>show</summary>
 <p>
 ```bash
@@ -235,10 +242,7 @@ k expose pod nginx --name=nginx-svc --port=8080 --target-port=80
 </details>
 
 # Create 3 deployments 
-In the default namespace, 
-deployment 1: name: nginx-deploy, image: nginx:1.14 replicas: 2, labels: app=partner-portal tier=app cost-center=123, annotate deployment as 'nginx-1.14-custom approved-infosec'
-deployment 2: name: redis-deploy, image: redis replicas: 1, labesl:  labels: app=partner-portal tier=cache cost-center=123, annotate deployment as 'redis-custom approved-infosec'
-deployment 3: name: mysql-deploy, image: mysql replicas: 1, labels:  labels: app=partner-portal tier=db cost-center=123, annotate deployment as 'mysql-custom approved-infosec'
+In the default namespace, deployment 1: name: nginx-deploy, image: nginx:1.14 replicas: 2, labels: app=partner-portal tier=app cost-center=123, annotate deployment as 'nginx-1.14-custom approved-infosec'
 
 <details><summary>show</summary>
 <p>
@@ -250,10 +254,59 @@ deployment 3: name: mysql-deploy, image: mysql replicas: 1, labels:  labels: app
 </p>
 </details>
 
+In the default namespace,  deployment 2: name: redis-deploy, image: redis replicas: 1, labesl:  labels: app=partner-portal tier=cache cost-center=123, annotate deployment as 'redis-custom approved-infosec'
+
+<details><summary>show</summary>
+<p>
+
+```bash
+2 update......
+
+```
+</p>
+</details>
+
+
+In the default namespace, deployment 3: name: mysql-deploy, image: mysql replicas: 1, labels:  labels: app=partner-portal tier=db cost-center=123, annotate deployment as 'mysql-custom approved-infosec'
+
+<details><summary>show</summary>
+<p>
+
+```bash
+2 update......
+
+```
+</p>
+</details>
+
+
 # Create pv and pvc's
-In the default namespace, 
 pv1 : name: nginx-pv, storageclass: local, size 1Gi, hostPath: /mnt/nginxpv ,  accessModes: readwriteMany
+<details><summary>show</summary>
+<p>
+
+```bash
+2 update......
+
+```
+</p>
+</details>
+
+# Create pv and pvc's
 pv2: name: redis-pv, storageclass: local, size 1Gi, hostPath: /mnt/redispv , ..... accessModes: readwriteMany
+
+<details><summary>show</summary>
+<p>
+
+```bash
+2 update......
+
+```
+</p>
+</details>
+
+
+# Create pv and pvc's
 pv3: name: mysql-pv, storageclass: local, size 1Gi, hostPath: /mnt/mysqlpv ,  accessModes: readwriteMany  -- ***THIS PV needs to reside on only NODE 2 - use nodeAffinity ****
 
 <details><summary>show</summary>

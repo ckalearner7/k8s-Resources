@@ -229,18 +229,6 @@ k run  --generator=run-pod/v1 bash-pod --image=bash --command -- /bin/sh -c "sle
 </details>
 
 
-# Expose pod nginx via service
-In the default namespace, service name is: nginx-svc port: 8080 target-port: 80 
-<details><summary>show</summary>
-<p>
-
-```bash
-k expose pod nginx --name=nginx-svc --port=8080 --target-port=80 
-
-```
-</p>
-</details>
-
 # Create 3 deployments 
 In the default namespace, deployment 1: name: nginx-deploy, image: nginx:1.14 replicas: 2, labels: app=partner-portal tier=app cost-center=123, annotate deployment as 'nginx-1.14-custom approved-infosec'
 
@@ -248,7 +236,43 @@ In the default namespace, deployment 1: name: nginx-deploy, image: nginx:1.14 re
 <p>
 
 ```bash
-2 update......
+k create deploy nginx-deploy --image=nginx:1.14 --dry-run -o yaml > nd.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: partner-portal         #change
+    tier: app                   #add
+    cost-center: "123"          #add
+  name: nginx-deploy
+  namespace: default            #add
+spec:
+  replicas: 2           #add
+  selector:
+    matchLabels:
+      app: partner-portal               #change
+      tier: app                         #add
+      cost-center: "123"                        #add
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: partner-portal             #change
+        tier: app                       #add
+        cost-center: "123"              #add
+    spec:
+      containers:
+      - image: nginx:1.14
+        name: nginx
+        resources: {}
+status: {}
+
+k annotate deploy nginx-deploy kubernetes.io/change-cause="nginx-1.14-custom approved-infosec"
+
+k rollout history deploy nginx-deploy
 
 ```
 </p>
@@ -260,7 +284,43 @@ In the default namespace,  deployment 2: name: redis-deploy, image: redis replic
 <p>
 
 ```bash
-2 update......
+k create deploy redis-deploy --image=redis --dry-run -o yaml > rd.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: partner-portal         #change
+    tier: cache                 #add
+    cost-center: "123"          #add
+  name: redis-deploy
+  namespace: default            #add
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: partner-portal         #change
+      tier: cache                 #add
+      cost-center: "123"          #add
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: partner-portal         #change
+        tier: cache                 #add
+        cost-center: "123"          #add
+    spec:
+      containers:
+      - image: redis
+        name: redis
+        resources: {}
+status: {}
+
+k annotate deploy redis-deploy kubernetes.io/change-cause="redis-custom approved-infosec"
+
+k rollout history deploy redis-deploy
 
 ```
 </p>
@@ -273,60 +333,249 @@ In the default namespace, deployment 3: name: mysql-deploy, image: mysql replica
 <p>
 
 ```bash
-2 update......
+k create deploy mysql-deploy --image=mysql --dry-run -o yaml > md.sql
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: partner-portal         #change
+    tier: cache                 #add
+    cost-center: "123"          #add
+  name: mysql-deploy
+  namespace: default            #add
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-deploy
+      app: partner-portal         #change
+      tier: cache                 #add
+      cost-center: "123"          #add
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: partner-portal         #change
+        tier: cache                 #add
+        cost-center: "123"          #add
+    spec:
+      containers:
+      - image: mysql
+        name: mysql
+        env:
+        - name:  MYSQL_ROOT_PASSWORD
+          value: password
+        resources: {}
+status: {}
+
+k annotate deploy mysql-deploy kubernetes.io/change-cause="mysql-custom approved-infosec"
+
+ k rollout history deploy mysql-deploy
+ 
 ```
 </p>
 </details>
 
 
-# Create pv and pvc's
-pv1 : name: nginx-pv, storageclass: local, size 1Gi, hostPath: /mnt/nginxpv ,  accessModes: readwriteMany
+# Create pv and pvc's for nginx (we will use these later)
+name: nginx-pv-volume
+storageclass: local
+size 1Gi
+hostPath: /mnt/data/nginx
+accessModes: ReadWriteMany
+
+pvc name: nginx-pv-claim
+
 <details><summary>show</summary>
 <p>
 
 ```bash
-2 update......
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nginx-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: local
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data/nginx"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-pv-claim
+spec:
+  storageClassName: local
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
 
 ```
 </p>
 </details>
 
-# Create pv and pvc's
-pv2: name: redis-pv, storageclass: local, size 1Gi, hostPath: /mnt/redispv , ..... accessModes: readwriteMany
+# Create pv and pvc's for redis (we will use these later)
+name: redis-pv-volume
+storageclass: local
+size 1Gi
+hostPath: /mnt/data/nginx
+accessModes: ReadWriteMany
+
+pvc name: redis-pv-claim
 
 <details><summary>show</summary>
 <p>
 
 ```bash
-2 update......
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: local
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data/redis"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pv-claim
+spec:
+  storageClassName: local
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
 
 ```
 </p>
 </details>
 
 
-# Create pv and pvc's
-pv3: name: mysql-pv, storageclass: local, size 1Gi, hostPath: /mnt/mysqlpv ,  accessModes: readwriteMany  -- ***THIS PV needs to reside on only NODE 2 - use nodeAffinity ****
+# Create pv and pvc's for mysql (we will use these later)
+name: mysql-pv-volume
+storageclass: local
+size 1Gi
+hostPath: /mnt/data/mysql
+accessModes: ReadWriteMany
+***THIS PV needs to reside on only NODE 2 - use nodeAffinity ****
+
+pvc name: mysql-pv-claim
+
 
 <details><summary>show</summary>
 <p>
 
 ```bash
-2 update......
+On node: k8s-node-2, create the director
+ssh root@k8s-node-2
+mkdir -p /mnt/data/mysql
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: local
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  local:
+    path: "/mnt/data/mysql"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k8s-node-2
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  storageClassName: local
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
 
 ```
 </p>
 </details>
 
+
+
+# Expose pod nginx via service
+In the default namespace, service name is: nginx-svc port: 8080 target-port: 80 
+<details><summary>show</summary>
+<p>
+
+```bash
+k expose pod nginx-pod --name=nginx-svc --port=8080 --target-port=80 
+
+```
+</p>
+</details>
 
 # Create node port service for nginx pod
-In the default namespace, service name is: nginx-svc-np port: 80 target-port: 80 nodePort: 30080 
+In the default namespace, service name is: nginx-np-svc port: 80 target-port: 80 nodePort: 30080 
 <details><summary>show</summary>
 <p>
 
 ```bash
-2 update......
+k expose pod nginx-pod --name=nginx-np-svc --type=NodePort --port=80 --dry-run -o yaml > np-svc.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx-pod
+  name: nginx-np-svc
+  namespace: default            #add
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    nodePort: 30080             #add
+  selector:
+    run: nginx-pod
+  type: NodePort
+status:
+  loadBalancer: {}
+  
+  If you are working on the master, you can curl the localhost
+  curl localhost:30080
+  
+  or 
+  curl 192.168.205.10:30080
+  curl 192.168.205.11:30080
+  curl 192.168.205.12:30080
 
 ```
 </p>

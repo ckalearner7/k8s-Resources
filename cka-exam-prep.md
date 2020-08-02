@@ -1577,8 +1577,8 @@ Solution here.....
 
 # HEADER TEMPLATE
 ## Sub-Heading
-### Note ###
-*** Note1 *** 
+### Note 
+
 <details><summary>show</summary>
 <p>
 

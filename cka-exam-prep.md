@@ -1372,45 +1372,102 @@ Step5: On Master, wait for some time
 </p>
 </details>
 
-# Create a deployment with nginx, container port running on 80, labels: tier=frontend; app=partner-portal, with 3 replicas.  Add a redis container and make sure that each redis container is co-located with the nginx container
+# In the development namespace, create a deployment, partner-portal using image: nginx, container port running on 80, labels: tier=frontend; app=partner-portal, with 3 replicas.  Add a redis deployment, partner-portal-cache, image: redis, replicas: 3 and make sure that each redis container is co-located with the nginx container
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+
+Step1: create the parter-portal deployment with label: app: partner-portal 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: partner-portal
+    tier: frontend
+  name: partner-portal
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: partner-portal
+      tier: frontend
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: partner-portal
+        tier: frontend
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - partner-portal
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+
+Step2: Create the partner-portal-cache deployment with redis
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: partner-portal-cache
+  name: partner-portal-cache
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: partner-portal-cache
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: partner-portal-cache
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - partner-portal-cache
+            topologyKey: "kubernetes.io/hostname"
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - partner-portal
+            topologyKey: "kubernetes.io/hostname" 
+      containers:
+      - image: redis
+        name: redis
+        resources: {}
+status: {}
+
 ```
 </p>
 </details>
 
-# Run a POD on the master
-<details><summary>show</summary>
-<p>
-
-```bash
-Solution here.....
-```
-</p>
-</details>
-
-# Run a POD on a specific node
-<details><summary>show</summary>
-<p>
-
-```bash
-Solution here.....
-```
-</p>
-</details>
-
-# Create a service account named, secret-admin, and provide read on secrets.  Run a pod with that specific service account, and now curl the kubernetes cluster to confirm access
-<details><summary>show</summary>
-<p>
-
-```bash
-Solution here.....
-```
-</p>
-</details>
 
 # Create a user “scott” and authenticate via certs, as in scott.key, and scott.crt
 <details><summary>show</summary>
@@ -1464,27 +1521,7 @@ Solution here.....
 </details>
 
 
-# Create a service account “scott-app-sa"
-<details><summary>show</summary>
-<p>
-
-```bash
-Solution here.....
-```
-</p>
-</details>
-
 # Create a role called frontend, with all access to pods and deployments. 
-<details><summary>show</summary>
-<p>
-
-```bash
-Solution here.....
-```
-</p>
-</details>
-
-# Authorize "scott-app-sa" to create PODs and Deployments
 <details><summary>show</summary>
 <p>
 
@@ -1537,4 +1574,17 @@ Solution here.....
 </p>
 </details>
 
+
+# HEADER TEMPLATE
+## Sub-Heading
+### Note ###
+*** Note1 *** 
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
 

@@ -1469,12 +1469,41 @@ status: {}
 </details>
 
 
-# Create a user “scott” and authenticate via certs, as in scott.key, and scott.crt
+# Create a user “scott” belonging to dba group, and authenticate via certs, as in scott.key, and scott.crt
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+
+openssl genrsa -out scott.key 2048
+
+openssl req -new -key scott.key -out scott.csr -subj "/CN=scott/O=dba"
+
+cat <<EOF | kubectl apply -f - 
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  name: scott
+spec:
+  groups:
+  - system:authenticated
+   request: $(cat scott.csr | base64 | tr -d '\n')
+   usages:
+   - digital signature
+   - key encipherment
+   - client auth
+EOF
+
+k get csr
+
+k certificate approve scott
+
+kubectl get csr scott -o jsonpath='{.status.certificate}' \
+  | base64 --decode > scott.crt
+
+
+ 
+
 ```
 </p>
 </details>
@@ -1484,7 +1513,15 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+kubectl create role developer --verb="*" --resource=pods,services
+
+kubectl create rolebinding developer-binding-scott --role=developer --user=scott
+
+Test:
+k auth can-i list pods --as scott #yes
+k auth can-i list services --as scott #yes
+k auth can-i list deploy --as scott #no
+
 ```
 </p>
 </details>
@@ -1505,7 +1542,18 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+k config set-credentials scott --client-key=/vagrant/scott.key --client-certificate=/vagrant/scott.crt --embed-certs=true
+
+kubectl config set-context scott --cluster=kubernetes --user=scott
+
+View current-context before changing context: 
+k config view
+k config view | grep current-context
+
+Now change,
+k config use-context scott
+k config view
+k config view | grep current-context
 ```
 </p>
 </details>
@@ -1515,18 +1563,13 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
-```
-</p>
-</details>
+k config use-context scott
+k config view
+k config view | grep current-context
 
+kubectl get pods
+# If you get an error about access to namespace, then change the namespace
 
-# Create a role called frontend, with all access to pods and deployments. 
-<details><summary>show</summary>
-<p>
-
-```bash
-Solution here.....
 ```
 </p>
 </details>

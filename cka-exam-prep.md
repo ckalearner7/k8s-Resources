@@ -931,7 +931,7 @@ status: {}
 </p>
 </details>
 
-# Create a demonset that runs on all the nodes, cpu: 10m, memory: 10Mi
+# Create a daemon-set called, my-daemonset with image: nginx, that runs on all the nodes, including the master and assign the following requests cpu: 10m, memory: 10Mi
 <details><summary>show</summary>
 <p>
 

@@ -728,17 +728,91 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+apiVersion: v1
+kind: Pod 
+metadata:
+  creationTimestamp: null
+  labels:
+    component: kube-scheduler-important
+    tier: control-plane
+  name: kube-scheduler-important
+  namespace: kube-system
+spec:
+  containers:
+  - command:
+    - kube-scheduler
+    - --authentication-kubeconfig=/etc/kubernetes/scheduler.conf
+    - --authorization-kubeconfig=/etc/kubernetes/scheduler.conf
+    - --bind-address=127.0.0.1
+    - --kubeconfig=/etc/kubernetes/scheduler.conf
+    - --leader-elect=false
+    - --scheduler-name=kube-scheduler-important
+    - --port=7777
+    - --secure-port=7778
+    image: k8s.gcr.io/kube-scheduler:v1.18.0
+    imagePullPolicy: IfNotPresent
+    livenessProbe:
+      failureThreshold: 8
+      httpGet:
+        host: 127.0.0.1
+        path: /healthz
+        port: 7778
+        scheme: HTTPS
+      initialDelaySeconds: 15
+      timeoutSeconds: 15
+    name: kube-scheduler-important
+    resources:
+      requests:
+        cpu: 100m
+    volumeMounts:
+    - mountPath: /etc/kubernetes/scheduler.conf
+      name: kubeconfig
+      readOnly: true
+  hostNetwork: true
+  priorityClassName: system-cluster-critical
+  volumes:
+  - hostPath:
+      path: /etc/kubernetes/scheduler.conf
+      type: FileOrCreate
+    name: kubeconfig
+status: {}
 ```
 </p>
 </details>
 
-# Create CM (fname=scott, lname=tiger) and read that CM in a configmap1, image: httpd:2.4-alpine
+# Create config map, configmap1, fname=scott, lname=tiger, and read the config map values in a pod configmap1 using image: httpd:2.4-alpine
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+k create cm configmap1 --from-literal=fname=scott --from-literal=lname=tiger
+
+Create pod using imperative way and then edit the file 
+ k run configmap1 --image=httpd:2.4-alpine $dr > 1.yaml
+ 
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: configmap1
+  name: configmap1
+spec:
+  containers:
+  - image: httpd:2.4-alpine
+    name: configmap1
+    envFrom:              #add
+    - configMapRef:       #add
+        name: configmap1  #add
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+Test:
+k exec configmap1 -it -- env | grep name
+
+
 ```
 </p>
 </details>
@@ -748,7 +822,31 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: configmap2
+  name: configmap2
+spec:
+  volumes: 
+  - name: config-volume
+    configMap:
+       name: configmap1
+  containers:
+  - image: httpd:2.4-alpine
+    name: configmap2
+    volumeMounts:
+    - name: config-volume
+      mountPath: /tmp/config
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+Test: 
+k exec configmap2 -it -- cat /tmp/config/fname
 ```
 </p>
 </details>
@@ -758,17 +856,77 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: configmap3
+  name: configmap3
+spec:
+  containers:
+  - image: httpd:2.4-alpine
+    name: configmap3
+    env:
+    - name: FNAME
+      valueFrom:
+       configMapKeyRef:
+        name: configmap1
+        key: fname
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+k exec configmap3 -it -- env | grep FNAME
+
 ```
 </p>
 </details>
 
-# Create a deployment of nginx to run on the master
+# Create a namespace "development" and then create deployment,ngind-deploy, using image:nginx to run on the master in the namespace development
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+k create ns development
+--now switch to development using alias "sc"
+
+k describe node k8s-head | grep -i taint
+
+k create deploy nginx-deploy --image=nginx $dr > 1.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx-deploy
+  name: nginx-deploy
+  namespace: development
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-deploy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-deploy
+    spec:
+      nodeSelector: 
+        kubernetes.io/hostname: k8s-head
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+
 ```
 </p>
 </details>

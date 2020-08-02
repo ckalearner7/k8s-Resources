@@ -936,47 +936,153 @@ status: {}
 <p>
 
 ```bash
-Solution here.....
+
+Since there is no imperative way to create a DS, instead create a deployment and then edit
+
+k create deploy my-daemsonset --image=nginx $dr > 1.yaml
+
+apiVersion: apps/v1
+kind: DaemonSet        
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-daemsonset
+  name: my-daemsonset
+spec:
+  selector:
+    matchLabels:
+      app: my-daemsonset
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: my-daemsonset
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+        
 ```
 </p>
 </details>
 
-# Create a secret called secret1 user=user1 and pass=1234
+# In the development namespace, create a secret called secret1 user=user1 and pass=1234
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+Use the alias sc to switch to development namespace
+k create secret generic secret1 --from-literal=user=user1 --from-literal=pass=1234
+
 ```
 </p>
 </details>
 
-# Create pod secret1 and mount secret1 as volume
+# In the development namespace, create pod secret1 (image: nginx) and mount secret1 as volume
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+k run secret1 --image=nginx $dr > 1.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: secret1
+  name: secret1
+spec:
+  volumes:
+  - name: secret-vol
+    secret:
+      secretName: secret1
+  containers:
+  - image: nginx
+    name: secret1
+    volumeMounts:
+    - name: secret-vol
+      mountPath: /tmp/secret
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+To test:
+k exec secret1 -it -- cat /tmp/secret/pass
+
 ```
 </p>
 </details>
 
-# Create pod secret2 and read user as USER from secret1
+# In the development namespace, create pod secret2 (image: nginx) and read user as USER from secret1
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+k run secret2 --image=nginx $dr > 1.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: secret2
+  name: secret2
+spec:
+  containers:
+  - image: nginx
+    name: secret2
+    env:
+    - name: USER
+      valueFrom:
+        secretKeyRef:
+          key: user
+          name: secret1
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+k exec secret2 -it -- env | grep USER
+
 ```
 </p>
 </details>
 
-# Create pod secret3 and read both the values from secret1, user and pass
+# In the development namespace, create pod secret3 (image: nginx) and read both the values from secret1, user and pass
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+
+k run secret3 --image=nginx $dr > 1.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: secret3
+  name: secret3
+spec:
+  containers:
+  - image: nginx
+    name: secret3
+    envFrom:
+    - secretRef:
+        name: secret1
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+k exec secret3 -it -- env | grep user
+k exec secret3 -it -- env | grep pass
 ```
 </p>
 </details>
@@ -986,7 +1092,11 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+The file destroy-1.sh is uploaded
+Git clone the repo
+chmod +x destroy-1.sh
+./destroy-1.sh
+
 ```
 </p>
 </details>
@@ -996,7 +1106,10 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+The file destroy-2.sh is uploaded
+Git clone the repo
+chmod +x destroy-2.sh
+./destroy-2.sh
 ```
 </p>
 </details>
@@ -1007,18 +1120,24 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+The file destroy-2.sh is uploaded
+Git clone the repo
+chmod +x destroy-2.sh
+./destroy-2.sh
 ```
 </p>
 </details>
 
 
-# Create a POD nslookup-nginx, nginx image and service, nslookup-svc, and nslookup both the pod and service
+# In the development namespace, create a POD nslookup-nginx, nginx image and service, nslookup-svc, and nslookup both the pod and service
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+Create the POD and Service
+k run nslookup-nginx --image=nginx --expose --port=80
+
+
 ```
 </p>
 </details>

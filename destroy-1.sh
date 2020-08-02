@@ -14,4 +14,5 @@ ORIG_FILENAME=kube-apiserver.yaml
 cp -p /etc/kubernetes/manifests/$ORIG_FILENAME ~/.save/$ORIG_FILENAME.$suffix
 cp -p /etc/kubernetes/manifests/$ORIG_FILENAME $ORIG_FILENAME
 sed 's/\/etc\/kubernetes\/pki\/ca.crt/\/etc\/kubernetes\/pki\/ca1.crt/' $ORIG_FILENAME > /tmp/a.yaml
+rm $ORIG_FILENAME
 cp /tmp/a.yaml /etc/kubernetes/manifests/$ORIG_FILENAME

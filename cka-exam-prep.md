@@ -1569,6 +1569,10 @@ k config view | grep current-context
 
 kubectl get pods
 # If you get an error about access to namespace, then change the namespace
+k config set-context --current --namespace=default
+
+k get pods
+
 
 ```
 </p>

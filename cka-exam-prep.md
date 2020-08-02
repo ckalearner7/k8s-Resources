@@ -708,6 +708,7 @@ Solution here.....
 <p>
 
 ```bash
+***Note: etcdctl installation is covered in Step 1 - installation of 3 node cluster***
 ETCDCTL_API=3 etcdctl snapshot save -h
 kd po etcd-k8s-head $kn |grep Command -A 18
 ETCDCTL_API=3 etcdctl snapshot save /tmp/etcd-bkup.db --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key --endpoints=https://192.168.205.10:2379

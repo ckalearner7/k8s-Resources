@@ -1129,7 +1129,7 @@ chmod +x destroy-2.sh
 </details>
 
 
-# In the development namespace, create a POD nslookup-nginx, nginx image and service, nslookup-svc, and nslookup both the pod and service
+# In the development namespace, create a POD nslookup-nginx, nginx image and service, nslookup-nginx, and nslookup both the pod and service
 <details><summary>show</summary>
 <p>
 
@@ -1137,27 +1137,153 @@ chmod +x destroy-2.sh
 Create the POD and Service
 k run nslookup-nginx --image=nginx --expose --port=80
 
+Now, create a busybox pod, using image busybox:1.28
+
+k run bb --image=busybox:1.28 --command -- /bin/sh -c "sleep 3600"
+
+Now, get into the POD
+k exec bb -it -- /bin/sh
+
+Note that since the svc is in a different namespace, you can either nslookup via service name or if calling from a different namespace, make sure to use the fqdn but with the right namespace
+
+nslookup nslookup-nginx
+or
+nslookup nslookup-nginx.development.svc.cluster.local
+ 
+## For POD Lookups, substitute the "." (period) in PODs IP address with "-", see below.  Make sure the right namespace is being referred and reference to "pod" as well.  The POD I created has an ip address: 10.46.0.6
+
+nslookup 10-46-0-6.development.pod.cluster.local
 
 ```
 </p>
 </details>
 
-# Create a deployment with 3 replicas, and ensure that the POD is created on different nodes, as in the replicas of POD should not run on the same node
+# In the development namespace, create a deployment, nginx-anti-pod-affinity-d, image: nginx, with 3 replicas, and ensure that the POD is created on different nodes, as in the replicas of POD should not run on the same node
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+k create deploy nginx-anti-pod-affinity-d --image=nginx $dr > 1.yaml
+
+Edit the defintion as shown below to add the podAntiAffinity
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx-anti-pod-affinity-d
+  name: nginx-anti-pod-affinity-d
+  namespace: development
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-anti-pod-affinity-d
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-anti-pod-affinity-d
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - nginx-anti-pod-affinity-d
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+
+
 ```
 </p>
 </details>
 
-# Create a service account called - “scott-sa” and then using imperative way, create a pod with schedulername - “scott-sa”, requests of memory: 10Mi, cpu: 0.2 and limits: memory: 10Mi, cpu: 0.2m, ports, and labels as name: scotts-pod, sa-used: scott-sa.  Now using either jsonpath or custom-columns, investigate the requests and limits assigned.  In addition, now add the QOS class for the POD
+
+
+# Create a POD, nginx-node-affinity-pod, image: nginx and schedule it on node k8s-node-1 using nodeAffinity
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+Either you can create a new label or use existing labels on the node.  I prefer to use the existing label, see below
+
+k describe node k8s-node-2 | grep -i label -A 5
+
+Plan to use - kubernetes.io/hostname=k8s-node-2
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-node-affinity-pod
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - k8s-node-2
+  containers:
+  - name: nginx
+    image: nginx
+
+```
+</p>
+</details>
+
+
+# In the development namespace, create a service account called - “scott-sa” and then create a pod (name: scott-pod, image: nginx) using service account - “scott-sa”, requests of memory: 10Mi, cpu: 0.2 and limits: memory: 10Mi, cpu: 0.2m, ports, and labels as name: scotts-pod, sa-used: scott-sa.  Give the serrvice-account privileges to create pod and secrets - therefore create a clusterrole called "restricted-access-role" and "restricted-access-rb".  Using either jsonpath or custom-columns, investigate the requests and limits assigned.  In addition,  to the JSON path outout, display the QOS class for the POD
+<details><summary>show</summary>
+<p>
+
+```bash
+
+k run scotts-pod --image=nginx --requests=cpu=0.2,memory=10Mi --limits=cpu=0.2,memory=10Mi --labels=name=scotts-pod,sa-used=scott-sa $dr > 1.yaml
+
+Edit the 1.yaml and add the serviceAcccountName: scott-sa in the Pod's spec as shown below
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    name: scotts-pod
+    sa-used: scott-sa
+  name: scotts-pod
+spec:
+  containers:
+  - image: nginx
+    name: scotts-pod
+    resources:
+      limits:
+        cpu: 200m
+        memory: 10Mi
+      requests:
+        cpu: 200m
+        memory: 10Mi
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+
+Create the ClusterRole
+k create clusterrole restricted-access-role --verb="*" --resource=pods,secrets
+
+k create clusterrolebinding restricted-access-rb --clusterrole=restricted-access-role --serviceaccount=development:scott-sa
+
+kgp scotts-pod -o custom-columns=NAME:.metadata.name,NAMESPACE:.metadata.namespace,CPU_REQ:.spec.containers[*].resources.requests.cpu,MEM_REQ:.spec.containers[*].resources.requests.memory,CPU_LIMIT:spec.containers[*].resources.limits.cpu,MEM_LIMIT:spec.containers[*].resources.limits.memory,QOS:.status.qosClass
+
 ```
 </p>
 </details>
@@ -1167,7 +1293,11 @@ Solution here.....
 <p>
 
 ```bash
-Solution here.....
+Step1: navigate to the vm1 directory - use vagrant up to launch one more VM
+Step2: install the necessary components in the new node, k8s-node-3.  Make sure you are using the same version as the other nodes - kubeadm, kubelet, kubectl
+Step3: Generate the join-token command
+Step4: Run on command on the node - k8s-node-3
+Step5: On Master, wait for some time
 ```
 </p>
 </details>

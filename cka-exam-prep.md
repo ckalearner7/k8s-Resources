@@ -1508,7 +1508,7 @@ kubectl get csr scott -o jsonpath='{.status.certificate}' \
 </p>
 </details>
 
-# Create a role called developer, with all access to pods, services and deployments. 
+# Create a role called developer, with all access to pods, and services. 
 <details><summary>show</summary>
 <p>
 
@@ -1526,12 +1526,31 @@ k auth can-i list deploy --as scott #no
 </p>
 </details>
 
-# Authorize "scott" to create PODs, Deployments and services
+# Authorize "scott" to create Deployments as well now.  Edit the existing role
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+k edit role developer 
+and add the section shown below  (partial code shown)
+
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - services
+  verbs:
+  - '*'
+- apiGroups:      # add
+  - apps          # add
+  resources:      # add
+  - deployments   # add
+  verbs:          # add
+  - '*'           # add
+  
+k auth can-i create deployments --as scott  
+  
 ```
 </p>
 </details>
@@ -1578,6 +1597,71 @@ k get pods
 </p>
 </details>
 
+# In the development namespace, create a multi-container POD with an init-container 
+# mount a volume, name: workdir, to all containers that lasts for the life of the container
+# initContainer: initc, image: busybox, mount a volume as /work-dir that creates "hello World" index.html file 
+# comtainer: c1: image: busybox, sleeps 1d
+# container: c2: image: nginx, mount path /usr/share/nginx/html, that should check for index.html as part of its readiness after a delay of 10 seconds and check port:80 and path: / as part of its liveness probe, check after a delay of 20 seconds and continue to check at 30 seconds interval
+<details><summary>show</summary>
+<p>
+
+```bash
+k run mult-container-init-pod --image=busybox $dr --command -- /bin/sh -c "sleep 1d" > 1.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: mult-container-init-pod
+  name: mult-container-init-pod
+spec:
+  volumes:
+  - name: work-dir
+    emptyDir: {}
+  initContainers:
+  - command:
+    - /bin/sh
+    - -c
+    - echo HelloWorld > /work-dir/index.html
+    image: busybox
+    name: initc
+    volumeMounts:
+    - name: work-dir
+      mountPath: /work-dir
+  containers:
+  - command:
+    - /bin/sh
+    - -c
+    - sleep 1d
+    image: busybox
+    name: c1      
+    resources: {}
+  - name: c2
+    image: nginx
+    volumeMounts:
+    - name: work-dir
+      mountPath: /usr/share/nginx/html
+    readinessProbe:
+      exec:
+        command:
+        - ls
+        - /usr/share/nginx/html/index.html
+      initialDelaySeconds: 10
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 20
+      periodSeconds: 30
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+</p>
+</details>
+
 
 # Create a network policy
 <details><summary>show</summary>
@@ -1590,15 +1674,79 @@ Solution here.....
 </details>
 
 
-# Create a init-container
+# FluentD logging as a sidecar container
 <details><summary>show</summary>
 <p>
 
 ```bash
-Solution here.....
+Create the fluentd config file first - writes to stdout
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-config
+data:
+  fluentd.conf: |
+    <source>
+      type tail
+      format none
+      path /var/log/nginx/access.log
+      pos_file /var/log/nginx/access.log.pos
+      tag count.format1
+    </source>
+
+    <match **>
+      type stdout
+    </match>
+ 
+Create the pod with fluentd as sidecar
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-fluentd-logging
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log/nginx
+  - name: sidecar
+    image: k8s.gcr.io/fluentd-gcp:1.30
+    env:
+    - name: FLUENTD_ARGS
+      value: -c /etc/fluentd-config/fluentd.conf
+    command:
+    - /bin/sh
+    - -c
+    - tail -f /var/log/nginx/access.log
+    volumeMounts:
+    - name: varlog
+      mountPath: /var/log/nginx
+    - name: config-volume
+      mountPath: /etc/fluentd-config
+  volumes:
+  - name: varlog
+    emptyDir: {}
+  - name: config-volume
+    configMap:
+      name: fluentd-config
+      
+Create traffic to see the logs, 
+get the IP of the POD and curl, in my case, the ip address of the nginx-fluentd-logging pod is 10.40.0.4
+
+curl 10.40.0.4:80
+curl 10.40.0.4:80
+
+Since we curl 2 times, we should see 2 logs in the output
+
+k logs nginx-fluentd-logging -c sidecar
+
 ```
 </p>
 </details>
+
 
 
 # Ingress

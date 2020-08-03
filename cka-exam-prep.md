@@ -1597,11 +1597,7 @@ k get pods
 </p>
 </details>
 
-# In the development namespace, create a multi-container POD with an init-container 
-# mount a volume, name: workdir, to all containers that lasts for the life of the container
-# initContainer: initc, image: busybox, mount a volume as /work-dir that creates "hello World" index.html file 
-# comtainer: c1: image: busybox, sleeps 1d
-# container: c2: image: nginx, mount path /usr/share/nginx/html, that should check for index.html as part of its readiness after a delay of 10 seconds and check port:80 and path: / as part of its liveness probe, check after a delay of 20 seconds and continue to check at 30 seconds interval
+# In the development namespace, create a multi-container POD with an init-container. Mount a volume, name: workdir, to all containers that lasts for the life of the container.  For the initContainer, call it initc, image: busybox, mount a volume as /work-dir that creates "hello World" index.html.  For comtainer c1, use image: busybox, sleeps 1d.  For container c2, use image as nginx, mount path /usr/share/nginx/html, and check for index.html as part of its readiness after a delay of 10 seconds and check port:80 and path: / as part of its liveness probe; for liveness, check after a delay of 20 seconds and continue to check at 30 seconds interval
 <details><summary>show</summary>
 <p>
 
@@ -1758,6 +1754,18 @@ Solution here.....
 ```
 </p>
 </details>
+
+
+# Jobs and cronjobs
+<details><summary>show</summary>
+<p>
+
+```bash
+Solution here.....
+```
+</p>
+</details>
+
 
 # Renew certificate using kubeadm and manually using openSSL
 <details><summary>show</summary>

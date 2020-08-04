@@ -1739,6 +1739,13 @@ Since we curl 2 times, we should see 2 logs in the output
 
 k logs nginx-fluentd-logging -c sidecar
 
+You can check the locations by
+
+k exec nginx-fluentd-logging -c sidecar -it -- /bin/sh
+ls -l /var/log/nginx/access.log
+
+cat /etc/fluentd-config/fluentd.conf
+
 ```
 </p>
 </details>

@@ -28,9 +28,11 @@ To create a cluster, use the following URLs
 1. Download and install virtual box
 2. Download and install vagrant
 3. Ubuntu Vagrant for deploying K8S cluster
-   a. https://github.com/LocusInnovations/k8s-vagrant-virtualbox
+  
+  https://github.com/LocusInnovations/k8s-vagrant-virtualbox
 4. CentOS Vagrant for deploying K8S cluster
-   a. https://github.com/justmeandopensource/kubernetes
+   
+   https://github.com/justmeandopensource/kubernetes
 5. If you dont have a terminal software such as SecureCRT, you can use the chrome SSH plug-in. I found this handy, and used it for my practise
 
 Finally, for practise - for CKAD, use the following links

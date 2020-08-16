@@ -2,14 +2,15 @@ This README will guide you on your Kubernetes journey with the aim of getting ce
 If you plan to do both your certifications, I strongly recommend you prep for CKAD first, followed by CKA.
 
 Pre-requisites
-Basic knowledge of linux and vi (or nano)
-tmux or screen, if you want multiple screens ( I used it in practise but did not use it for the exams)
+- Basic knowledge of linux and vi (or nano)
+- tmux or screen, if you want multiple screens ( I used it in practise but did not use it for the exams)
+- Basic knowledge of docker and containers - what is a container, docker commands such as ps, stop, logs, kill
 
 Training Course
 Stay with Mumshad Mannambeth course of Udemy - links below.  These courses are on sale for $12.99 to $14.99 so wait for a day or two before buying it at actual list price
-https://www.udemy.com/course/learn-kubernetes/
-https://www.udemy.com/course/certified-kubernetes-application-developer/
-https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/
+1. https://www.udemy.com/course/learn-kubernetes/
+2. https://www.udemy.com/course/certified-kubernetes-application-developer/
+3. https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/
 
 Do all the practise tests (atleast 2-3 times) that are referenced in the above, they help you give a solid base.
 
@@ -27,20 +28,20 @@ To create a cluster, use the following URLs
 1. Download and install virtual box
 2. Download and install vagrant
 3. Ubuntu Vagrant for deploying K8S cluster
-   https://github.com/LocusInnovations/k8s-vagrant-virtualbox
+   a. https://github.com/LocusInnovations/k8s-vagrant-virtualbox
 4. CentOS Vagrant for deploying K8S cluster
-   https://github.com/justmeandopensource/kubernetes
+   a. https://github.com/justmeandopensource/kubernetes
 5. If you dont have a terminal software such as SecureCRT, you can use the chrome SSH plug-in. I found this handy, and used it for my practise
 
 Finally, for practise - for CKAD, use the following links
-https://codeburst.io/kubernetes-ckad-weekly-challenges-overview-and-tips-7282b36a2681
-https://github.com/dgkanatsios/CKAD-exercises
-https://medium.com/bb-tutorials-and-thoughts/practice-enough-with-these-questions-for-the-ckad-exam-2f42d1228552
+1. https://codeburst.io/kubernetes-ckad-weekly-challenges-overview-and-tips-7282b36a2681
+2. https://github.com/dgkanatsios/CKAD-exercises
+3. https://medium.com/bb-tutorials-and-thoughts/practice-enough-with-these-questions-for-the-ckad-exam-2f42d1228552
 
 
 For CKA, use the link that Giri and I created (well, we are proud of it) since none existed for CKA before:
-https://levelup.gitconnected.com/kubernetes-cka-example-questions-practical-challenge-86318d85b4d 
-https://github.com/gvgiri/k8s-Resources/blob/master/cka-exam-prep.md
+1. https://levelup.gitconnected.com/kubernetes-cka-example-questions-practical-challenge-86318d85b4d 
+2. https://github.com/gvgiri/k8s-Resources/blob/master/cka-exam-prep.md
 
 
 Prior to the exam, you can also purchase CKAD and CKA practise exams at killer.sh (for $29.99 Euro, each, well worth it, again, wait for a SALE!)
